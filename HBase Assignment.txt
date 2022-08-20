@@ -1,0 +1,51 @@
+# Start the HBase shell
+hbase shell
+
+# Create a table called simplilearn with one column family named stats:
+create ‘simplilearn’, ‘stats’
+
+# Verify the table creation by listing everything
+list
+
+# Add a test value to the daily column in the stats column family for row 1:
+put ‘simplilearn’, ‘row1’, ‘stats:daily’, ‘test-daily-value’
+
+# Add a test value to the weekly column in the stats column family for row 1:
+put ‘simplilearn’, ‘row1’, ‘stats:weekly’, ‘test-weekly-value’
+
+# Add a test value to the weekly column in the stats column family for row 2:
+put ‘simplilearn’, ‘row2’, ‘stats:weekly’, ‘test-weekly-value’
+
+# Display ALL content of the table
+scan ‘simplilearn’
+
+# Display content of row1
+get ‘simplilearn’, ‘row1’
+
+# Disable the table
+disable ‘simplilearn’
+
+# Drop the table
+drop ‘simplilearn’
+
+# Exit shell
+exits
+
+## Assignment
+# create table
+create 'iLogs', {NAME => 'ora', VERSIONS => 5},{NAME => 'ra', VERSIONS => 5},{NAME => 'rc', VERSIONS => 5},{NAME => 'rda', VERSIONS => 5},{NAME => 'rra', VERSIONS => 5}
+
+# import data to iLogs
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=',' -Dimporttsv.columns=HBASE_ROW_KEY,ora:TYPE,ora:0_3,ora:3_6,ora:6_9,ora:9_12,ora:12_15,ora:15_18,ora:18_21,ora:21_24,ora:Total iLogs /user/rohitgarghotmail/HBase/ora-incidentlog.csv
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=',' -Dimporttsv.columns=HBASE_ROW_KEY,ra:TYPE,ra:0_3,ra:3_6,ra:6_9,ra:9_12,ra:12_15,ra:15_18,ra:18_21,ra:21_24,ra:Total iLogs /user/rohitgarghotmail/HBase/ra-incidentlog.csv
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=',' -Dimporttsv.columns=HBASE_ROW_KEY,rc:TYPE,rc:0_3,rc:3_6,rc:6_9,rc:9_12,rc:12_15,rc:15_18,rc:18_21,rc:21_24,rc:Total iLogs /user/rohitgarghotmail/HBase/rc-incidentlog.csv
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=',' -Dimporttsv.columns=HBASE_ROW_KEY,rda:TYPE,rda:0_3,rda:3_6,rda:6_9,rda:9_12,rda:12_15,rda:15_18,rda:18_21,rda:21_24,rda:Total iLogs /user/rohitgarghotmail/HBase/rda-incidentlog.csv
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=',' -Dimporttsv.columns=HBASE_ROW_KEY,rra:TYPE,rra:0_3,rra:3_6,rra:6_9,rra:9_12,rra:12_15,rra:15_18,rra:18_21,rra:21_24,rra:Total iLogs /user/rohitgarghotmail/HBase/rra-incidentlog.csv
+
+# Check data upload
+scan 'iLogs'
+
+# Query data for Year (rowFilter), Type of Accident(family) and Time Duration(column)
+scan 'iLogs', {COLUMNS => ['ora:TYPE','ora:0_3','ora:3_6','ora:6_9','ora:9_12','ora:12_15','ora:15_18','ora:18_21','ora:21_24','ora:Total'], FILTER=>"(RowFilter(=,'binary:2013'))"}
+
+# Query total number of accident in given year

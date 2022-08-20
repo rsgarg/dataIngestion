@@ -1,0 +1,35 @@
+sudo apt update
+wget https://downloads.apache.org/hadoop/common/hadoop-3.3.3/hadoop-3.3.3.tar.gz
+tar -xvzf hadoop-3.3.3.tar.gz
+sudo mv hadoop-3.3.3 /usr/local/hadoop
+sudo mkdir /usr/local/hadoop/logs
+sudo chown -R hadoop:hadoop /usr/local/hadoop
+sudo nano ~/.bashrc
+	<HERE>
+
+cat ~/.bashrc
+source ~/.bashrc
+readlink -f /usr/bin/javac
+sudo nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+cd /usr/local/hadoop/lib
+sudo wget https://jcenter.bintray.com/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar
+hadoop version
+sudo nano $HADOOP_HOME/etc/hadoop/core-site.xml
+sudo mkdir -p /home/hadoop/hdfs/{namenode,datanode}
+sudo chown -R hadoop:hadoop /home/hadoop/hdfs
+sudo nano $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+sudo nano $HADOOP_HOME/etc/hadoop/mapred-site.xml
+sudo nano $HADOOP_HOME/etc/hadoop/yarn-site.xml
+hdfs namenode -format
+sudo ufw allow 22
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+sudo apt install openssh-server
+sudo apt install net-tools
+sudo netstat -ltnp | grep sshd
+sudo ufw allow 22/tcp
+sudo ufw reload
+ssh-keygen -t rsa -C "rohit.garg@hotmail.com" -f ~/.ssh/id_rsa -P ""
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+start-dfs.sh
+start-yarn.sh
+

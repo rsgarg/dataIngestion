@@ -1,0 +1,169 @@
+Script:
+scala> :history
+ 56  df.printschema()
+ 57  exit
+ 58  import org.apache.spark.sql.SQLContext
+ 59  val sqlContext = new SQLContext(sc)
+ 60  val df = sqlContext.read.format("com.databricks.spark.csv").option("header","true").load("/user/rohitgarghotmail/scala/Data-set.txt")
+ 61  df.printSchema()
+ 62  val totalcount = df.count()
+ 63  val totalcount = df.count().toDouble
+ 64  val subscription_count = df.filter($"y" === "yes").count().toDouble
+ 65  val success_rate = subscription_count/totalcount
+ 66  val failure_rate = 1 - success_rate
+ 67  df.select(max($"age"), avg($"age"), min($"age")).show()
+ 68  df.registerTempTable("rsg_prjData")
+ 69  sqlContext.sql("select percentile(balance,0.5) as median, avg(balance) as average from rsg_prjData").show()
+ 70  df.groupBy("y").agg(avg($"age")).show()
+ 71  df.groupBy("y").agg(avg($"marital")).show()
+ 72  df.groupBy("y").agg(count($"marital")).show()
+ 73  df.groupBy("marital","y").count().sort($"count".desc).show(50)
+ 74  df.groupBy("age","y").count().sort($"count".desc).show(50)
+
+
+
+scala> import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SQLContext
+scala> val sqlContext = new SQLContext(sc)
+warning: there was one deprecation warning; re-run with -deprecation for details
+sqlContext: org.apache.spark.sql.SQLContext = org.apache.spark.sql.SQLContext@3d94b49d
+scala> val df = sqlContext.read.format("com.databricks.spark.csv").option("header","true").load("/user/rohitgarghotmail/scala/Data-set.txt")
+ 
+22/08/13 15:21:47 WARN lineage.LineageWriter: Lineage directory /var/log/spark/lineage doesn't exist or is not writable. Lineage for this ap
+plication will be disabled.
+
+df: org.apache.spark.sql.DataFrame = [age: string, job: string ... 15 more fields]
+scala> df.printSchema()
+root
+ |-- age: string (nullable = true)
+ |-- job: string (nullable = true)
+ |-- marital: string (nullable = true)
+ |-- education: string (nullable = true)
+ |-- default: string (nullable = true)
+ |-- balance: string (nullable = true)
+ |-- housing: string (nullable = true)
+ |-- loan: string (nullable = true)
+ |-- contact: string (nullable = true)
+ |-- day: string (nullable = true)
+ |-- month: string (nullable = true)
+ |-- duration: string (nullable = true)
+ |-- campaign: string (nullable = true)
+ |-- pdays: string (nullable = true)
+ |-- previous: string (nullable = true)
+ |-- poutcome: string (nullable = true)
+ |-- y: string (nullable = true)
+scala> val totalcount = df.count()
+totalcount: Long = 45211
+scala> val totalcount = df.count().toDouble
+totalcount: Double = 45211.0
+scala> val subscription_count = df.filter($"y" === "yes").count().toDouble
+subscription_count: Double = 5289.0
+
+scala> val success_rate = subscription_count/totalcount
+success_rate: Double = 0.11698480458295547
+scala> val failure_rate = 1 - success_rate
+failure_rate: Double = 0.8830151954170445
+
+scala> df.select(max($"age"), avg($"age"), min($"age")).show()
++--------+-----------------+--------+                                           
+|max(age)|         avg(age)|min(age)|
++--------+-----------------+--------+
+|      95|40.93621021432837|      18|
++--------+-----------------+--------+
+
+scala> df.registerTempTable("rsg_prjData")
+warning: there was one deprecation warning; re-run with -deprecation for details
+scala> sqlContext.sql("select percentile(balance,0.5) as median, avg(balance) as average from rsg_prjData").show()
++------+------------------+                                                     
+|median|           average|
++------+------------------+
+| 448.0|1362.2720576850766|
++------+------------------+
+
+scala> df.groupBy("y").agg(avg($"age")).show()
++---+------------------+                                                        
+|  y|          avg(age)|
++---+------------------+
+| no| 40.83898602274435|
+|yes|41.670069956513515|
++---+------------------+
+
+scala> df.groupBy("y").agg(count($"marital")).show()
++---+--------------+
+|  y|count(marital)|
++---+--------------+
+| no|         39922|
+|yes|          5289|
++---+--------------+
+
+scala> df.groupBy("marital","y").count().sort($"count".desc).show(50)
++--------+---+-----+                                                            
+| marital|  y|count|
++--------+---+-----+
+| married| no|24459|
+|  single| no|10878|
+|divorced| no| 4585|
+| married|yes| 2755|
+|  single|yes| 1912|
+|divorced|yes|  622|
++--------+---+-----+
+
+scala> df.groupBy("age","y").count().sort($"count".desc).show(50)
++---+---+-----+                                                                 
+|age|  y|count|
++---+---+-----+
+| 32| no| 1864|
+| 31| no| 1790|
+| 33| no| 1762|
+| 34| no| 1732|
+| 35| no| 1685|
+| 36| no| 1611|
+| 30| no| 1540|
+| 37| no| 1526|
+| 39| no| 1344|
+| 38| no| 1322|
+| 40| no| 1239|
+| 41| no| 1171|
+| 42| no| 1131|
+| 45| no| 1110|
+| 43| no| 1058|
+| 46| no| 1057|
+| 44| no| 1043|
+| 29| no| 1014|
+| 47| no|  975|
+| 48| no|  915|
+| 49| no|  893|
+| 28| no|  876|
+| 50| no|  867|
+| 51| no|  859|
+| 52| no|  826|
+| 53| no|  806|
+| 27| no|  768|
+| 57| no|  750|
+| 55| no|  730|
+| 54| no|  727|
+| 56| no|  710|
+| 59| no|  682|
+| 26| no|  671|
+| 58| no|  668|
+| 60| no|  498|
+| 25| no|  414|
+| 24| no|  234|
+| 32|yes|  221|
+| 30|yes|  217|
+| 33|yes|  210|
+| 35|yes|  209|
+| 31|yes|  206|
+| 34|yes|  198|
+| 36|yes|  195|
+| 29|yes|  171|
+| 37|yes|  170|
+| 28|yes|  162|
+| 23| no|  158|
+| 38|yes|  144|
+| 39|yes|  143|
++---+---+-----+
+only showing top 50 rows
+
+
+

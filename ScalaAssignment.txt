@@ -1,0 +1,56 @@
+scala> import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SQLContext
+scala> val sqlContext = new SQLContext(sc)
+warning: there was one deprecation warning; re-run with -deprecation for details
+sqlContext: org.apache.spark.sql.SQLContext = org.apache.spark.sql.SQLContext@2fedaa2e
+scala> val df = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").load("/user/rohitgarghotmail/scala/7_companies_case_study.csv")
+22/08/06 20:47:21 WARN lineage.LineageWriter: Lineage directory /var/log/spark/lineage doesn't exist or is not writable. Lineage for this application will be disabled.
+df: org.apache.spark.sql.DataFrame = [name: string, domain: string ... 7 more fields]
+scala> df.printSchema()
+root
+ |-- name: string (nullable = true)
+ |-- domain: string (nullable = true)
+ |-- year_founded: string (nullable = true)
+ |-- industry: string (nullable = true)
+ |-- size_range: string (nullable = true)
+ |-- country: string (nullable = true)
+ |-- linkedin_url: string (nullable = true)
+ |-- cur_emp_est: string (nullable = true)
+ |-- total_emp: string (nullable = true)
+
+scala> df.registerTempTable("comp_data")
+warning: there was one deprecation warning; re-run with -deprecation for details
+
+scala> sqlContext.sql("select name, total_emp from comp_data order by CAST(total_emp as int) desc limit 5").take(5).foreach(println)
+[ibm,716906]                                                                    
+[accenture,455768]
+[us army,445958]
+[ey,428960]
+[hewlett-packard,412952]
+
+scala> sqlContext.sql("select name, year_founded from comp_data where CAST(year_founded as int) < '1980'").show()
++--------------------+------------+                                             
+|                name|year_founded|
++--------------------+------------+
+|                 ibm|        1911|
+|tata consultancy ...|        1968|
+|             us army|        1800|
+|     hewlett-packard|        1939|
+|             walmart|        1962|
+|           microsoft|        1975|
+|                at&t|        1876|
+|united states air...|        1947|
+|            deloitte|        1900|
+|                citi|        1812|
+|     bank of america|        1968|
+|jpmorgan chase & co.|        1823|
+|               apple|        1976|
+|             siemens|        1847|
+|              oracle|        1977|
+|               nokia|        1865|
+|           capgemini|        1967|
+|  wipro technologies|        1945|
+|                hsbc|        1865|
+|mcdonald's corpor...|        1955|
++--------------------+------------+
+only showing top 20 rows
